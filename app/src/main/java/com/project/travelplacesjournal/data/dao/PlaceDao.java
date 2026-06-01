@@ -30,17 +30,11 @@ public interface PlaceDao {
     @Query("SELECT * FROM places WHERE isPublic = 1")
     List<Place> getPublicPlaces();
 
-    @Query("""
-        SELECT * FROM places
-        WHERE userId = :userId
-        ORDER BY visitDate DESC
-    """)
+    @Query(" SELECT * FROM places WHERE userId = :userId " +
+            "ORDER BY visitDate DESC")
     List<Place> getUserPlacesSorted(int userId);
 
-    @Query("""
-        SELECT * FROM places
-        WHERE name LIKE '%' || :search || '%'
-        OR description LIKE '%' || :search || '%'
-    """)
+    @Query("SELECT * FROM places WHERE name LIKE '%' || :search || '%' " +
+            "OR description LIKE '%' || :search || '%'")
     List<Place> search(String search);
 }
