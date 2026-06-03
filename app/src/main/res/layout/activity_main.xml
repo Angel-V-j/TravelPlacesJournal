@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World! Добре дошли в Журнала за пътувания!"
+        android:text="Добре дошли в Журнала за пътувания!"
         android:textSize="18sp"
         android:textColor="#333333"
         android:gravity="center"
@@ -24,5 +24,15 @@
         android:backgroundTint="#007BFF"
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
+    <Button
+        android:id="@+id/btnAdminPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Администраторски Панел"
+        android:backgroundTint="#20c997"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
 
 </LinearLayout>
