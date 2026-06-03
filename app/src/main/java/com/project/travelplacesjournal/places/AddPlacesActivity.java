@@ -1,0 +1,153 @@
+package com.project.travelplacesjournal.places;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RatingBar;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.project.travelplacesjournal.R;
+import com.project.travelplacesjournal.data.database.AppDatabase;
+import com.project.travelplacesjournal.data.database.DatabaseProvider;
+import com.project.travelplacesjournal.data.entities.Place;
+
+public class AddPlacesActivity extends AppCompatActivity {
+
+    private EditText etName;
+    private EditText etDescription;
+    private EditText etNotes;
+    private EditText etVisitDate;
+    private EditText etLatitude;
+    private EditText etLongitude;
+    private EditText etCategoryId;
+
+    private RatingBar ratingBar;
+    private CheckBox cbPublic;
+
+    private Button btnSave;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_places);
+
+        etName = findViewById(R.id.etName);
+        etDescription = findViewById(R.id.etDescription);
+        etNotes = findViewById(R.id.etNotes);
+        etVisitDate = findViewById(R.id.etVisitDate);
+        etLatitude = findViewById(R.id.etLatitude);
+        etLongitude = findViewById(R.id.etLongitude);
+        etCategoryId = findViewById(R.id.etCategoryId);
+
+        ratingBar = findViewById(R.id.ratingBar);
+        cbPublic = findViewById(R.id.cbPublic);
+
+        btnSave = findViewById(R.id.btnSave);
+
+        btnSave.setOnClickListener(v -> savePlace());
+    }
+
+    private void savePlace() {
+
+        try {
+
+            String name =
+                    etName.getText().toString().trim();
+
+            String description =
+                    etDescription.getText().toString().trim();
+
+            String notes =
+                    etNotes.getText().toString().trim();
+
+            String visitDate =
+                    etVisitDate.getText().toString().trim();
+
+            if (name.isEmpty()) {
+                etName.setError("Name is required");
+                return;
+            }
+
+            int categoryId = 0;
+
+            if (!etCategoryId.getText().toString().trim().isEmpty()) {
+                categoryId =
+                        Integer.parseInt(
+                                etCategoryId.getText().toString().trim()
+                        );
+            }
+
+            double latitude = 0;
+
+            if (!etLatitude.getText().toString().trim().isEmpty()) {
+                latitude =
+                        Double.parseDouble(
+                                etLatitude.getText().toString().trim()
+                        );
+            }
+
+            double longitude = 0;
+
+            if (!etLongitude.getText().toString().trim().isEmpty()) {
+                longitude =
+                        Double.parseDouble(
+                                etLongitude.getText().toString().trim()
+                        );
+            }
+
+            int rating = (int) ratingBar.getRating();
+
+            boolean isPublic = cbPublic.isChecked();
+
+            Place place = new Place();
+
+            place.setName(name);
+            place.setDescription(description);
+            place.setNotes(notes);
+            place.setVisitDate(visitDate);
+
+            place.setLatitude(latitude);
+            place.setLongitude(longitude);
+
+            place.setCategoryId(categoryId);
+
+            place.setRating(rating);
+
+            place.setPublic(isPublic);
+
+            // TODO:
+            // когато направите login система
+            // тук ще идва реалното userId
+
+            place.setUserId(1);
+
+            AppDatabase db =
+                    DatabaseProvider.getDatabase(this);
+
+            db.placeDao().insert(place);
+
+            Toast.makeText(
+                    this,
+                    "Place saved successfully",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            finish();
+
+        } catch (Exception ex) {
+
+            Toast.makeText(
+                    this,
+                    "Error: " + ex.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
+}

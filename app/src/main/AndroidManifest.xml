@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelPlacesJournal">
         <activity
+            android:name=".places.AddPlacesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".places.PlaceListActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
