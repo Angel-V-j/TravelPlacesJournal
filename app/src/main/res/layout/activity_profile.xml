@@ -11,15 +11,32 @@
         android:padding="24dp"
         android:gravity="center_horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Моят Профил"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Моят Профил"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_centerHorizontal="true" />
+
+            <ImageButton
+                android:id="@+id/btnProfileBackArrow"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_revert"
+                android:contentDescription="Назад" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/ivProfileAvatar"
