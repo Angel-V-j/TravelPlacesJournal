@@ -7,11 +7,7 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.AppDatabase;
@@ -36,7 +32,7 @@ public class AddPlacesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_places);
+        setContentView(R.layout.activity_add_place);
 
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
@@ -57,7 +53,6 @@ public class AddPlacesActivity extends AppCompatActivity {
     private void savePlace() {
 
         try {
-
             String name =
                     etName.getText().toString().trim();
 
@@ -125,7 +120,6 @@ public class AddPlacesActivity extends AppCompatActivity {
             // TODO:
             // когато направите login система
             // тук ще идва реалното userId
-
             place.setUserId(1);
 
             AppDatabase db =

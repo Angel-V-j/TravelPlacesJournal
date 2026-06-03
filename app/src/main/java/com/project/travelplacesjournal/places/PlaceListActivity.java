@@ -25,12 +25,15 @@ public class PlaceListActivity extends AppCompatActivity {
     private RecyclerView recyclerViewPlaces;
     private Button btnAddPlace;
 
+    private AppDatabase db;
     private PlaceAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_list);
+
+        db = DatabaseProvider.getDatabase(this);
 
         recyclerViewPlaces =
                 findViewById(R.id.recyclerViewPlaces);
@@ -44,14 +47,15 @@ public class PlaceListActivity extends AppCompatActivity {
 
         btnAddPlace.setOnClickListener(v -> {
 
-            Intent intent =
-                    new Intent(
-                            PlaceListActivity.this,
-                            AddPlacesActivity.class
-                    );
+            Intent intent = new Intent(
+                    PlaceListActivity.this,
+                    AddPlacesActivity.class
+            );
 
             startActivity(intent);
         });
+
+        loadPlaces();
     }
 
     @Override
@@ -62,14 +66,10 @@ public class PlaceListActivity extends AppCompatActivity {
     }
 
     private void loadPlaces() {
-
-        AppDatabase db =
-                DatabaseProvider.getDatabase(this);
-
         List<Place> places =
                 db.placeDao().getAll();
 
-        adapter = new PlaceAdapter(places);
+        adapter = new PlaceAdapter(this,  places);
 
         recyclerViewPlaces.setAdapter(adapter);
     }
