@@ -19,5 +19,5 @@ public interface PlaceImageDao {
     void delete(PlaceImage image);
 
     @Query("SELECT * FROM place_images WHERE placeId = :placeId")
-    List<PlaceImage> getImagesForPlace(int placeId);
+    List<PlaceImage> getByPlaceId(int placeId);
 }

@@ -1,18 +1,31 @@
 package com.project.travelplacesjournal.places;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.Place;
+import com.project.travelplacesjournal.data.entities.PlaceImage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddPlacesActivity extends AppCompatActivity {
 
@@ -28,6 +41,14 @@ public class AddPlacesActivity extends AppCompatActivity {
     private CheckBox cbPublic;
 
     private Button btnSave;
+    private Button btnGallery;
+    private Button btnCamera;
+
+    private ImageView imgPreview;
+    private Bitmap capturedBitmap;
+
+    private final List<Uri> selectedImages =
+            new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +67,57 @@ public class AddPlacesActivity extends AppCompatActivity {
         cbPublic = findViewById(R.id.cbPublic);
 
         btnSave = findViewById(R.id.btnSave);
+        btnGallery = findViewById(R.id.btnGallery);
+        btnCamera = findViewById(R.id.btnCamera);
 
         btnSave.setOnClickListener(v -> savePlace());
+        btnGallery.setOnClickListener(v -> {
+
+            galleryLauncher.launch("image/*");
+        });
+        btnCamera.setOnClickListener(v -> {
+
+            if(ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED){
+
+                cameraLauncher.launch(null);
+            }
+            else{
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{
+                                Manifest.permission.CAMERA
+                        },
+                        100
+                );
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            String[] permissions,
+            int[] grantResults) {
+
+        super.onRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults
+        );
+
+        if(requestCode == 100){
+
+            if(grantResults.length > 0
+                    && grantResults[0]
+                    == PackageManager.PERMISSION_GRANTED){
+
+                cameraLauncher.launch(null);
+            }
+        }
     }
 
     private void savePlace() {
@@ -125,7 +195,23 @@ public class AddPlacesActivity extends AppCompatActivity {
             AppDatabase db =
                     DatabaseProvider.getDatabase(this);
 
-            db.placeDao().insert(place);
+            long placeId =
+                    db.placeDao().insert(place);
+
+            for(Uri uri : selectedImages) {
+                PlaceImage image =
+                        new PlaceImage();
+
+                image.setPlaceId(
+                        (int) placeId
+                );
+
+                image.setImagePath(
+                        uri.toString()
+                );
+
+                db.placeImageDao().insert(image);
+            }
 
             Toast.makeText(
                     this,
@@ -144,4 +230,35 @@ public class AddPlacesActivity extends AppCompatActivity {
             ).show();
         }
     }
+    private final ActivityResultLauncher<String> galleryLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.GetMultipleContents(),
+                    uris -> {
+                        if(uris != null){
+                            selectedImages.clear();
+                            selectedImages.addAll(uris);
+
+                            if(!uris.isEmpty()){
+
+                                imgPreview.setImageURI(
+                                        uris.get(0)
+                                );
+                            }
+                        }
+                    }
+            );
+
+    private final ActivityResultLauncher<Void> cameraLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.TakePicturePreview(),
+                    bitmap -> {
+                        if(bitmap != null){
+
+                            capturedBitmap = bitmap;
+                            imgPreview.setImageBitmap(
+                                    bitmap
+                            );
+                        }
+                    }
+            );
 }
