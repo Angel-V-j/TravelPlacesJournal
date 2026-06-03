@@ -44,19 +44,21 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.lifecycle.runtime.ktx
     implementation libs.material
+
     implementation libs.material3
     implementation libs.ui
     implementation libs.ui.graphics
     implementation libs.ui.tooling.preview
+
+    implementation libs.room.runtime
     testImplementation libs.junit
     androidTestImplementation platform(libs.compose.bom)
     androidTestImplementation libs.espresso.core
     androidTestImplementation libs.ext.junit
 
-    implementation "androidx.room:room-runtime:2.8.0"
     androidTestImplementation libs.ui.test.junit4
 
-    annotationProcessor "androidx.room:room-compiler:2.8.0"
     debugImplementation libs.ui.test.manifest
     debugImplementation libs.ui.tooling
+    annotationProcessor libs.room.compiler
 }
