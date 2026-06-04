@@ -1,4 +1,4 @@
-package com.project.travelplacesjournal.category;
+package com.project.travelplacesjournal.admin;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.travelplacesjournal.R;
+import com.project.travelplacesjournal.adapters.CategoryAdapter;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.Category;
