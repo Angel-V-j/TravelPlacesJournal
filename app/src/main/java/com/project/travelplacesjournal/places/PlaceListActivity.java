@@ -4,11 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,21 +31,17 @@ public class PlaceListActivity extends AppCompatActivity {
 
         db = DatabaseProvider.getDatabase(this);
 
-        recyclerViewPlaces =
-                findViewById(R.id.recyclerViewPlaces);
+        recyclerViewPlaces = findViewById(R.id.recyclerViewPlaces);
 
-        btnAddPlace =
-                findViewById(R.id.btnAddPlace);
+        btnAddPlace = findViewById(R.id.btnAddPlace);
 
-        recyclerViewPlaces.setLayoutManager(
-                new LinearLayoutManager(this)
-        );
+        recyclerViewPlaces.setLayoutManager(new LinearLayoutManager(this));
 
         btnAddPlace.setOnClickListener(v -> {
 
             Intent intent = new Intent(
                     PlaceListActivity.this,
-                    AddPlacesActivity.class
+                    AddPlaceActivity.class
             );
 
             startActivity(intent);
@@ -66,11 +58,8 @@ public class PlaceListActivity extends AppCompatActivity {
     }
 
     private void loadPlaces() {
-        List<Place> places =
-                db.placeDao().getAll();
-
+        List<Place> places = db.placeDao().getAll();
         adapter = new PlaceAdapter(this,  places);
-
         recyclerViewPlaces.setAdapter(adapter);
     }
 }

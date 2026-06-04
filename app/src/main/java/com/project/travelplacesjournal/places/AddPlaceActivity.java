@@ -22,7 +22,7 @@ import com.project.travelplacesjournal.utils.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPlacesActivity extends AppCompatActivity {
+public class AddPlaceActivity extends AppCompatActivity {
     private LinearLayout layoutImages;
     private EditText etName;
     private EditText etDescription;

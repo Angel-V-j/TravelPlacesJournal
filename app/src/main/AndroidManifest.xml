@@ -45,7 +45,7 @@
             android:name=".places.PlaceListActivity"
             android:exported="false" />
         <activity
-            android:name=".places.AddPlacesActivity"
+            android:name=".places.AddPlaceActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

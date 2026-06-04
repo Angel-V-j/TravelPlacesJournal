@@ -72,16 +72,6 @@ public class ImageUtils {
         layoutImages.removeView(preview);
     }
 
-//    public static void openCamera(Context context, Activity activity,
-//                                  ActivityResultLauncher<Uri> cameraLauncher){
-//        var cameraImageUri = ImageUtils.getCamImgUri(context, activity);
-//
-//        if(cameraImageUri != null){
-//            cameraLauncher.launch(
-//                    cameraImageUri
-//            );
-//        }
-//    }
     public static Uri getCamImgUri(Context context, Activity activity) {
         if(PermissionHelper.hasCameraPermission(context)){
             return createCamImgUri(context);
