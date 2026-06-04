@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.AppDatabase;
@@ -24,6 +25,7 @@ import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class AddPlacesActivity extends AppCompatActivity {
 
     private ImageView imgPreview;
     private Bitmap capturedBitmap;
+    private Uri cameraImageUri;
 
     private final List<Uri> selectedImages =
             new ArrayList<>();
@@ -82,7 +85,7 @@ public class AddPlacesActivity extends AppCompatActivity {
                     Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED){
 
-                cameraLauncher.launch(null);
+                openCamera();
             }
             else{
 
@@ -115,7 +118,7 @@ public class AddPlacesActivity extends AppCompatActivity {
                     && grantResults[0]
                     == PackageManager.PERMISSION_GRANTED){
 
-                cameraLauncher.launch(null);
+                openCamera();
             }
         }
     }
@@ -230,6 +233,34 @@ public class AddPlacesActivity extends AppCompatActivity {
             ).show();
         }
     }
+    private void openCamera() {
+
+        try {
+
+            File imageFile =
+                    File.createTempFile(
+                            "place_",
+                            ".jpg",
+                            getCacheDir()
+                    );
+
+            cameraImageUri =
+                    FileProvider.getUriForFile(
+                            this,
+                            getPackageName()
+                                    + ".provider",
+                            imageFile
+                    );
+
+            cameraLauncher.launch(
+                    cameraImageUri
+            );
+
+        } catch (Exception ex) {
+
+            ex.printStackTrace();
+        }
+    }
     private final ActivityResultLauncher<String> galleryLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.GetMultipleContents(),
@@ -248,15 +279,20 @@ public class AddPlacesActivity extends AppCompatActivity {
                     }
             );
 
-    private final ActivityResultLauncher<Void> cameraLauncher =
+    private final ActivityResultLauncher<Uri>
+            cameraLauncher =
             registerForActivityResult(
-                    new ActivityResultContracts.TakePicturePreview(),
-                    bitmap -> {
-                        if(bitmap != null){
+                    new ActivityResultContracts.TakePicture(),
+                    success -> {
 
-                            capturedBitmap = bitmap;
-                            imgPreview.setImageBitmap(
-                                    bitmap
+                        if(success){
+
+                            selectedImages.add(
+                                    cameraImageUri
+                            );
+
+                            imgPreview.setImageURI(
+                                    cameraImageUri
                             );
                         }
                     }
