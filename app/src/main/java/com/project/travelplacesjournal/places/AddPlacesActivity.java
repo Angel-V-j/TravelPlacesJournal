@@ -5,32 +5,25 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Toast;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
+import com.project.travelplacesjournal.utils.PlaceImageHelper;
+import com.project.travelplacesjournal.utils.SessionManager;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AddPlacesActivity extends AppCompatActivity {
-
+    private LinearLayout layoutImages;
     private EditText etName;
     private EditText etDescription;
     private EditText etNotes;
@@ -38,25 +31,20 @@ public class AddPlacesActivity extends AppCompatActivity {
     private EditText etLatitude;
     private EditText etLongitude;
     private EditText etCategoryId;
-
     private RatingBar ratingBar;
     private CheckBox cbPublic;
-
     private Button btnSave;
     private Button btnGallery;
     private Button btnCamera;
-
-    private ImageView imgPreview;
-    private Bitmap capturedBitmap;
-    private Uri cameraImageUri;
-
-    private final List<Uri> selectedImages =
-            new ArrayList<>();
+    private PlaceImageHelper imgHelper;
+    private final List<Uri> selectedImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_place);
+
+        layoutImages = findViewById(R.id.layoutImages);
 
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
@@ -72,55 +60,23 @@ public class AddPlacesActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         btnGallery = findViewById(R.id.btnGallery);
         btnCamera = findViewById(R.id.btnCamera);
+        imgHelper = new PlaceImageHelper(this,
+                layoutImages, selectedImages);
 
         btnSave.setOnClickListener(v -> savePlace());
-        btnGallery.setOnClickListener(v -> {
-
-            galleryLauncher.launch("image/*");
-        });
-        btnCamera.setOnClickListener(v -> {
-
-            if(ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_GRANTED){
-
-                openCamera();
-            }
-            else{
-
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{
-                                Manifest.permission.CAMERA
-                        },
-                        100
-                );
-            }
-        });
+        btnGallery.setOnClickListener(v -> imgHelper.openGallery());
+        btnCamera.setOnClickListener(v -> imgHelper.openCamera());
     }
 
     @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            String[] permissions,
-            int[] grantResults) {
-
-        super.onRequestPermissionsResult(
-                requestCode,
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,
                 permissions,
-                grantResults
-        );
+                grantResults);
 
-        if(requestCode == 100){
-
-            if(grantResults.length > 0
-                    && grantResults[0]
-                    == PackageManager.PERMISSION_GRANTED){
-
-                openCamera();
-            }
-        }
+        imgHelper.handlePermissionResult(requestCode, grantResults);
     }
 
     private void savePlace() {
@@ -190,10 +146,7 @@ public class AddPlacesActivity extends AppCompatActivity {
 
             place.setPublic(isPublic);
 
-            // TODO:
-            // когато направите login система
-            // тук ще идва реалното userId
-            place.setUserId(1);
+            place.setUserId(new SessionManager(this).getUserId());
 
             AppDatabase db =
                     DatabaseProvider.getDatabase(this);
@@ -209,7 +162,7 @@ public class AddPlacesActivity extends AppCompatActivity {
                         (int) placeId
                 );
 
-                image.setImagePath(
+                image.setImageUri(
                         uri.toString()
                 );
 
@@ -233,68 +186,4 @@ public class AddPlacesActivity extends AppCompatActivity {
             ).show();
         }
     }
-    private void openCamera() {
-
-        try {
-
-            File imageFile =
-                    File.createTempFile(
-                            "place_",
-                            ".jpg",
-                            getCacheDir()
-                    );
-
-            cameraImageUri =
-                    FileProvider.getUriForFile(
-                            this,
-                            getPackageName()
-                                    + ".provider",
-                            imageFile
-                    );
-
-            cameraLauncher.launch(
-                    cameraImageUri
-            );
-
-        } catch (Exception ex) {
-
-            ex.printStackTrace();
-        }
-    }
-    private final ActivityResultLauncher<String> galleryLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.GetMultipleContents(),
-                    uris -> {
-                        if(uris != null){
-                            selectedImages.clear();
-                            selectedImages.addAll(uris);
-
-                            if(!uris.isEmpty()){
-
-                                imgPreview.setImageURI(
-                                        uris.get(0)
-                                );
-                            }
-                        }
-                    }
-            );
-
-    private final ActivityResultLauncher<Uri>
-            cameraLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.TakePicture(),
-                    success -> {
-
-                        if(success){
-
-                            selectedImages.add(
-                                    cameraImageUri
-                            );
-
-                            imgPreview.setImageURI(
-                                    cameraImageUri
-                            );
-                        }
-                    }
-            );
 }

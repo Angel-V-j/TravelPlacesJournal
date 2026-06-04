@@ -1,9 +1,11 @@
 package com.project.travelplacesjournal.places;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -12,9 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.*;
 import com.project.travelplacesjournal.data.entities.Place;
+import com.project.travelplacesjournal.data.entities.PlaceImage;
+import com.project.travelplacesjournal.utils.PlaceImageHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditPlaceActivity extends AppCompatActivity {
-
+    private LinearLayout layoutImages;
     private EditText etName;
     private EditText etDescription;
     private EditText etNotes;
@@ -22,19 +29,22 @@ public class EditPlaceActivity extends AppCompatActivity {
     private EditText etLatitude;
     private EditText etLongitude;
     private EditText etCategoryId;
-
     private RatingBar ratingBar;
     private CheckBox cbPublic;
     private Button btnSave;
-
+    private Button btnGallery;
+    private Button btnCamera;
     private AppDatabase db;
     private Place place;
+    private PlaceImageHelper imgHelper;
+    private final List<Uri> selectedImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_place);
 
+        layoutImages = findViewById(R.id.layoutImages);
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
         etNotes = findViewById(R.id.etNotes);
@@ -47,57 +57,52 @@ public class EditPlaceActivity extends AppCompatActivity {
         cbPublic = findViewById(R.id.cbPublic);
 
         btnSave = findViewById(R.id.btnSave);
+        btnGallery = findViewById(R.id.btnGallery);
+        btnCamera = findViewById(R.id.btnCamera);
+        imgHelper = new PlaceImageHelper(this,
+                layoutImages, selectedImages);
 
         db = DatabaseProvider.getDatabase(this);
-
-        int placeId =
-                getIntent().getIntExtra("PLACE_ID", -1);
-
+        int placeId = getIntent().getIntExtra("PLACE_ID", -1);
         if (placeId == -1) {
             finish();
             return;
         }
 
         place = db.placeDao().getById(placeId);
-
+        loadPlace();
         if (place == null) {
             finish();
             return;
         }
 
-        loadPlace();
-
+        btnGallery.setOnClickListener(v -> imgHelper.openGallery());
+        btnCamera.setOnClickListener(v -> imgHelper.openCamera());
         btnSave.setOnClickListener(v -> updatePlace());
     }
 
     private void loadPlace() {
-
         etName.setText(place.getName());
         etDescription.setText(place.getDescription());
         etNotes.setText(place.getNotes());
         etVisitDate.setText(place.getVisitDate());
-
-        etLatitude.setText(
-                String.valueOf(place.getLatitude())
-        );
-
-        etLongitude.setText(
-                String.valueOf(place.getLongitude())
-        );
-
-        etCategoryId.setText(
-                String.valueOf(place.getCategoryId())
-        );
-
+        etLatitude.setText(String.valueOf(place.getLatitude()));
+        etLongitude.setText(String.valueOf(place.getLongitude()));
+        etCategoryId.setText(String.valueOf(place.getCategoryId()));
         ratingBar.setRating(place.getRating());
-
         cbPublic.setChecked(place.isPublic());
+
+        List<PlaceImage> images = db.placeImageDao()
+                .getByPlaceId(place.getId());
+        for(PlaceImage image : images) {
+            Uri uri = Uri.parse(image.getImageUri());
+            selectedImages.add(uri);
+            imgHelper.addImagePreview(uri);
+        }
     }
 
     private void updatePlace() {
-
         try {
-
             place.setName(
                     etName.getText().toString().trim()
             );
@@ -141,6 +146,14 @@ public class EditPlaceActivity extends AppCompatActivity {
             );
 
             db.placeDao().update(place);
+            db.placeImageDao().deleteByPlaceId(place.getId());
+
+            for(Uri uri : selectedImages){
+                PlaceImage image = new PlaceImage();
+                image.setPlaceId(place.getId());
+                image.setImageUri(uri.toString());
+                db.placeImageDao().insert(image);
+            }
 
             Toast.makeText(
                     this,
@@ -158,5 +171,16 @@ public class EditPlaceActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG
             ).show();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            String[] permissions,
+            int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,
+                permissions,
+                grantResults);
+
+        imgHelper.handlePermissionResult(requestCode, grantResults);
     }
 }

@@ -18,20 +18,20 @@ public class PlaceImage {
 
     private int placeId;
 
-    private String imagePath;
+    private String imageUri;
 
     public PlaceImage() {
     }
 
-    public PlaceImage(int id, int placeId, String imagePath) {
+    public PlaceImage(int id, int placeId, String imageUri) {
         this.id = id;
         this.placeId = placeId;
-        this.imagePath = imagePath;
+        this.imageUri = imageUri;
     }
 
-    public PlaceImage(int placeId, String imagePath) {
+    public PlaceImage(int placeId, String imageUri) {
         this.placeId = placeId;
-        this.imagePath = imagePath;
+        this.imageUri = imageUri;
     }
 
     public int getId() {
@@ -50,11 +50,11 @@ public class PlaceImage {
         this.placeId = placeId;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageUri() {
+        return imageUri;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 }
