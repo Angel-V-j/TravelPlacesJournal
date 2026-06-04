@@ -36,7 +36,13 @@
             android:name=".auth.ProfileActivity"
             android:exported="false" />
 
-        <activity android:name=".category.ManageCategoriesActivity"
+        <activity android:name=".admin.ManageCategoriesActivity"
+            android:exported="false" />
+
+        <activity android:name=".admin.AdminPanelActivity"
+            android:exported="false" />
+
+        <activity android:name=".admin.ManageUsersActivity"
             android:exported="false" />
     </application>
 

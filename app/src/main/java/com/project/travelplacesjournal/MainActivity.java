@@ -5,15 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.project.travelplacesjournal.auth.AdminPanelActivity;
+import com.project.travelplacesjournal.admin.AdminPanelActivity;
 import com.project.travelplacesjournal.auth.ProfileActivity;
-import com.project.travelplacesjournal.category.ManageCategoriesActivity;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.User;
@@ -44,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnAdminPanel.setOnClickListener(v->{
-            Intent intent=new Intent(MainActivity.this, ManageCategoriesActivity.class);
+            Intent intent=new Intent(MainActivity.this, AdminPanelActivity.class);
             startActivity(intent);
         });
 

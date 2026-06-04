@@ -1,4 +1,4 @@
-package com.project.travelplacesjournal.category;
+package com.project.travelplacesjournal.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
