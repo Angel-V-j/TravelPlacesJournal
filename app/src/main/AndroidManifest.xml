@@ -35,6 +35,9 @@
         <activity
             android:name=".auth.ProfileActivity"
             android:exported="false" />
+
+        <activity android:name=".category.ManageCategoriesActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.project.travelplacesjournal.auth.AdminPanelActivity;
 import com.project.travelplacesjournal.auth.ProfileActivity;
+import com.project.travelplacesjournal.category.ManageCategoriesActivity;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.User;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnAdminPanel.setOnClickListener(v->{
-            Intent intent=new Intent(MainActivity.this, AdminPanelActivity.class);
+            Intent intent=new Intent(MainActivity.this, ManageCategoriesActivity.class);
             startActivity(intent);
         });
 
