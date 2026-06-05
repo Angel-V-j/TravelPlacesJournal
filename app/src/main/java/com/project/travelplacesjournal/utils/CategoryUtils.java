@@ -1,12 +1,8 @@
 package com.project.travelplacesjournal.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
-import com.project.travelplacesjournal.R;
-import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.entities.Category;
 
 import java.util.ArrayList;

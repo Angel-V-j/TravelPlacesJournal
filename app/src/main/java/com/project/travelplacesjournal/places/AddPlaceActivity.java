@@ -1,10 +1,7 @@
 package com.project.travelplacesjournal.places;
 
-import static androidx.core.location.LocationManagerCompat.getCurrentLocation;
-
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -16,7 +13,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.project.travelplacesjournal.R;
-import com.project.travelplacesjournal.data.dao.CategoryDao;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.Category;
