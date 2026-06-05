@@ -50,8 +50,9 @@ dependencies {
     implementation libs.ui.graphics
     implementation libs.ui.tooling.preview
     implementation 'androidx.core:core-ktx:1.16.0'
-
+    implementation "com.google.android.gms:play-services-location:21.3.0"
     implementation libs.room.runtime
+
     testImplementation libs.junit
     androidTestImplementation platform(libs.compose.bom)
     androidTestImplementation libs.espresso.core

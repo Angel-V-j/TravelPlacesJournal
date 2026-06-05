@@ -1,4 +1,4 @@
-package com.project.travelplacesjournal.utils;
+package com.project.travelplacesjournal.places.helpers;
 
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -7,6 +7,9 @@ import android.widget.LinearLayout;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.project.travelplacesjournal.utils.ImageUtils;
+import com.project.travelplacesjournal.utils.PermissionHelper;
 
 import java.util.List;
 
@@ -28,22 +31,16 @@ public class PlaceImageHelper {
             List<Uri> selectedImages) {
 
         this.activity = activity;
-
         this.layoutImages = layoutImages;
-
         this.selectedImages = selectedImages;
 
-        galleryLauncher =
-                activity.registerForActivityResult(
+        galleryLauncher = activity.registerForActivityResult(
                         new ActivityResultContracts.GetMultipleContents(),
-                        this::handleGalleryImages
-                );
+                        this::handleGalleryImages);
 
-        cameraLauncher =
-                activity.registerForActivityResult(
+        cameraLauncher = activity.registerForActivityResult(
                         new ActivityResultContracts.TakePicture(),
-                        this::handleCameraResult
-                );
+                        this::handleCameraResult);
     }
 
     public void openGallery() {
@@ -53,7 +50,6 @@ public class PlaceImageHelper {
     public void openCamera() {
         if(PermissionHelper.hasCameraPermission(activity)) {
             cameraImageUri = ImageUtils.createCamImgUri(activity);
-
             if(cameraImageUri != null) {
                 cameraLauncher.launch(cameraImageUri);
             }

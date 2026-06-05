@@ -52,6 +52,12 @@
             android:hint="Longitude"
             android:inputType="numberDecimal|numberSigned" />
 
+        <Button
+            android:id="@+id/btnCurrentLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use Current Location"/>
+
         <EditText
             android:id="@+id/etCategoryId"
             android:layout_width="match_parent"

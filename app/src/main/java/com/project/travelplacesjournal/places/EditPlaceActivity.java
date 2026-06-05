@@ -15,7 +15,7 @@ import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.*;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
-import com.project.travelplacesjournal.utils.PlaceImageHelper;
+import com.project.travelplacesjournal.places.helpers.PlaceImageHelper;
 
 import java.util.ArrayList;
 import java.util.List;

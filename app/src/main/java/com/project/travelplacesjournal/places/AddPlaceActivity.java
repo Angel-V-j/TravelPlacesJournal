@@ -1,5 +1,7 @@
 package com.project.travelplacesjournal.places;
 
+import static androidx.core.location.LocationManagerCompat.getCurrentLocation;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
@@ -16,7 +18,8 @@ import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
-import com.project.travelplacesjournal.utils.PlaceImageHelper;
+import com.project.travelplacesjournal.places.helpers.LocationHelper;
+import com.project.travelplacesjournal.places.helpers.PlaceImageHelper;
 import com.project.travelplacesjournal.utils.SessionManager;
 
 import java.util.ArrayList;
@@ -34,9 +37,11 @@ public class AddPlaceActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private CheckBox cbPublic;
     private Button btnSave;
+    private Button btnCurrLocation;
     private Button btnGallery;
     private Button btnCamera;
     private PlaceImageHelper imgHelper;
+    private LocationHelper locHelper;
     private final List<Uri> selectedImages = new ArrayList<>();
 
     @Override
@@ -58,12 +63,17 @@ public class AddPlaceActivity extends AppCompatActivity {
         cbPublic = findViewById(R.id.cbPublic);
 
         btnSave = findViewById(R.id.btnSave);
+        btnCurrLocation = findViewById(R.id.btnCurrentLocation);
         btnGallery = findViewById(R.id.btnGallery);
         btnCamera = findViewById(R.id.btnCamera);
+
         imgHelper = new PlaceImageHelper(this,
                 layoutImages, selectedImages);
+        locHelper = new LocationHelper(this);
 
         btnSave.setOnClickListener(v -> savePlace());
+        btnCurrLocation.setOnClickListener(v ->
+                locHelper.fillLocationFields(etLatitude,etLongitude));
         btnGallery.setOnClickListener(v -> imgHelper.openGallery());
         btnCamera.setOnClickListener(v -> imgHelper.openCamera());
     }
