@@ -7,16 +7,19 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.*;
+import com.project.travelplacesjournal.data.entities.Category;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
 import com.project.travelplacesjournal.places.helpers.LocationHelper;
 import com.project.travelplacesjournal.places.helpers.PlaceImageHelper;
+import com.project.travelplacesjournal.utils.CategoryUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,7 @@ public class EditPlaceActivity extends AppCompatActivity {
     private EditText etVisitDate;
     private EditText etLatitude;
     private EditText etLongitude;
-    private EditText etCategoryId;
+    private Spinner spCategory;
     private RatingBar ratingBar;
     private CheckBox cbPublic;
     private Button btnSave;
@@ -40,8 +43,8 @@ public class EditPlaceActivity extends AppCompatActivity {
     private Place place;
     private PlaceImageHelper imgHelper;
     private LocationHelper locHelper;
-
     private final List<Uri> selectedImages = new ArrayList<>();
+    private final List<Category> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,7 @@ public class EditPlaceActivity extends AppCompatActivity {
         etVisitDate = findViewById(R.id.etVisitDate);
         etLatitude = findViewById(R.id.etLatitude);
         etLongitude = findViewById(R.id.etLongitude);
-        etCategoryId = findViewById(R.id.etCategoryId);
+        spCategory = findViewById(R.id.spCategory);
 
         ratingBar = findViewById(R.id.ratingBar);
         cbPublic = findViewById(R.id.cbPublic);
@@ -67,8 +70,8 @@ public class EditPlaceActivity extends AppCompatActivity {
         imgHelper = new PlaceImageHelper(this,
                 layoutImages, selectedImages);
         locHelper = new LocationHelper(this);
-
         db = DatabaseProvider.getDatabase(this);
+        categories.addAll(db.categoryDao().getAll());
         int placeId = getIntent().getIntExtra("PLACE_ID", -1);
         if (placeId == -1) {
             finish();
@@ -81,6 +84,7 @@ public class EditPlaceActivity extends AppCompatActivity {
             return;
         }
 
+        loadCategories();
         loadPlace();
         btnGallery.setOnClickListener(v -> imgHelper.openGallery());
         btnCurrentLocation.setOnClickListener(v ->
@@ -96,12 +100,12 @@ public class EditPlaceActivity extends AppCompatActivity {
         etVisitDate.setText(place.getVisitDate());
         etLatitude.setText(String.valueOf(place.getLatitude()));
         etLongitude.setText(String.valueOf(place.getLongitude()));
-        etCategoryId.setText(String.valueOf(place.getCategoryId()));
         ratingBar.setRating(place.getRating());
         cbPublic.setChecked(place.isPublic());
 
         List<PlaceImage> images = db.placeImageDao()
                 .getByPlaceId(place.getId());
+
         for(PlaceImage image : images) {
             Uri uri = Uri.parse(image.getImageUri());
             selectedImages.add(uri);
@@ -111,51 +115,20 @@ public class EditPlaceActivity extends AppCompatActivity {
 
     private void updatePlace() {
         try {
-            place.setName(
-                    etName.getText().toString().trim()
-            );
+            place.setName(etName.getText().toString().trim());
+            place.setDescription(etDescription.getText().toString().trim());
+            place.setNotes(etNotes.getText().toString().trim());
+            place.setVisitDate(etVisitDate.getText().toString().trim());
+            place.setLatitude(Double.parseDouble(etLatitude.getText().toString()));
+            place.setLongitude(Double.parseDouble(etLongitude.getText().toString()));
+            place.setCategoryId(categories
+                    .get(spCategory.getSelectedItemPosition())
+                    .getId());
 
-            place.setDescription(
-                    etDescription.getText().toString().trim()
-            );
-
-            place.setNotes(
-                    etNotes.getText().toString().trim()
-            );
-
-            place.setVisitDate(
-                    etVisitDate.getText().toString().trim()
-            );
-
-            place.setLatitude(
-                    Double.parseDouble(
-                            etLatitude.getText().toString()
-                    )
-            );
-
-            place.setLongitude(
-                    Double.parseDouble(
-                            etLongitude.getText().toString()
-                    )
-            );
-
-            place.setCategoryId(
-                    Integer.parseInt(
-                            etCategoryId.getText().toString()
-                    )
-            );
-
-            place.setRating(
-                    (int) ratingBar.getRating()
-            );
-
-            place.setPublic(
-                    cbPublic.isChecked()
-            );
-
+            place.setRating((int) ratingBar.getRating());
+            place.setPublic(cbPublic.isChecked());
             db.placeDao().update(place);
             db.placeImageDao().deleteByPlaceId(place.getId());
-
             for(Uri uri : selectedImages){
                 PlaceImage image = new PlaceImage();
                 image.setPlaceId(place.getId());
@@ -190,5 +163,29 @@ public class EditPlaceActivity extends AppCompatActivity {
                 grantResults);
 
         imgHelper.handlePermissionResult(requestCode, grantResults);
+    }
+
+    private void selectCurrentCategory() {
+        for(int i = 0; i < categories.size(); i++) {
+            if(categories.get(i).getId() == place.getCategoryId()) {
+                spCategory.setSelection(i, true);
+                break;
+            }
+        }
+    }
+
+    private void loadCategories() {
+        categories.clear();
+        categories.addAll(db.categoryDao().getAll());
+
+        new Thread(() -> {
+            runOnUiThread(() -> {
+                spCategory.setAdapter(CategoryUtils
+                        .createCategoryAdapter(categories, this));
+
+                selectCurrentCategory();
+            });
+
+        }).start();
     }
 }

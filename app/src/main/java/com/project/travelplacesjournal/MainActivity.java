@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.project.travelplacesjournal.data.entities.Category;
 import com.project.travelplacesjournal.places.AddPlaceActivity;
 import com.project.travelplacesjournal.places.PlaceListActivity;
 import com.project.travelplacesjournal.admin.AdminPanelActivity;
@@ -26,18 +28,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         btnPlaces = findViewById(R.id.btnPlaces);
         btnAddPlace = findViewById(R.id.btnAddPlace);
 
         btnPlaces.setOnClickListener(v -> {
-
-            Intent intent =
-                    new Intent(
-                            MainActivity.this,
-                            PlaceListActivity.class
-                    );
-
+            Intent intent = new Intent(MainActivity.this,
+                    PlaceListActivity.class);
             startActivity(intent);
         });
 
@@ -53,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         btnGoToProfile=findViewById(R.id.btnGoToProfile);
         btnAdminPanel= findViewById(R.id.btnAdminPanel);
 
+        seedCategories();
         checkUserPermissions();
 
         btnGoToProfile.setOnClickListener(v ->{
@@ -84,6 +81,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+        }).start();
+    }
+
+    private void seedCategories() {
+
+        new Thread(() -> {
+
+            if(db.categoryDao().getAll().isEmpty()) {
+
+                db.categoryDao().insert(
+                        new Category("Nature")
+                );
+
+                db.categoryDao().insert(
+                        new Category("Museum")
+                );
+
+                db.categoryDao().insert(
+                        new Category("Restaurant")
+                );
+            }
+
         }).start();
     }
 }

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.AppDatabase;
 import com.project.travelplacesjournal.data.database.DatabaseProvider;
+import com.project.travelplacesjournal.data.entities.Category;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
 import com.project.travelplacesjournal.places.EditPlaceActivity;
@@ -28,9 +29,11 @@ import java.util.List;
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>{
     private final Context context;
     private final List<Place> places;
-    public PlaceAdapter(Context context, List<Place> places) {
+    private final List<Category> categories;
+    public PlaceAdapter(Context context, List<Place> places, List<Category> categories) {
         this.context = context;
         this.places = places;
+        this.categories = categories;
     }
 
     @NonNull
@@ -47,15 +50,15 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
     }
 
     @Override
-    public void onBindViewHolder(
-            @NonNull PlaceViewHolder holder,
-            int position) {
+    public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
 
         Place place = places.get(position);
         holder.layoutImages.removeAllViews();
         holder.tvName.setText(place.getName());
         holder.tvDescription.setText(place.getDescription());
         holder.tvDate.setText("Visited: " + place.getVisitDate());
+        holder.tvCategoryName.setText(getCategoryById(
+                    place.getCategoryId()).getName());
         holder.ratingBar.setRating(place.getRating());
         AppDatabase db = DatabaseProvider.getDatabase(context);
 
@@ -86,17 +89,24 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         });
     }
 
+    private Category getCategoryById(int id) {
+        for (Category cat : categories)
+            if (cat.getId() == id)
+                return cat;
+
+        return null;
+    }
     @Override
     public int getItemCount() {
         return places.size();
     }
 
-    static class PlaceViewHolder
-            extends RecyclerView.ViewHolder {
+    static class PlaceViewHolder extends RecyclerView.ViewHolder {
         LinearLayout layoutImages;
         TextView tvName;
         TextView tvDescription;
         TextView tvDate;
+        TextView tvCategoryName;
         RatingBar ratingBar;
         Button btnEdit;
         Button btnDelete;
@@ -109,6 +119,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             tvName = itemView.findViewById(R.id.tvName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvDate = itemView.findViewById(R.id.tvDate);
+            tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
             ratingBar = itemView.findViewById(R.id.ratingBarItem);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);

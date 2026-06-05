@@ -58,13 +58,11 @@
             android:layout_height="wrap_content"
             android:text="Use Current Location"/>
 
-        <EditText
-            android:id="@+id/etCategoryId"
+        <Spinner
+            android:id="@+id/spCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Category ID"
-            android:inputType="number" />
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
