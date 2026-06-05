@@ -59,13 +59,15 @@ public class PlaceImageHelper {
     }
 
     private void handleGalleryImages(List<Uri> uris) {
-        if(uris == null){
+        if(uris == null)
             return;
-        }
 
         for(Uri uri : uris){
-            selectedImages.add(uri);
-            addImagePreview(uri);
+            Uri locUri = ImageUtils.copyImgToAppStr(activity, uri);
+            if (locUri != null) {
+                selectedImages.add(locUri);
+                addImagePreview(locUri);
+            }
         }
     }
 

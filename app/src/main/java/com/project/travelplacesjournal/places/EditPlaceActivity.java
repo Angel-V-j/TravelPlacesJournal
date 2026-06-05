@@ -15,6 +15,7 @@ import com.project.travelplacesjournal.R;
 import com.project.travelplacesjournal.data.database.*;
 import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
+import com.project.travelplacesjournal.places.helpers.LocationHelper;
 import com.project.travelplacesjournal.places.helpers.PlaceImageHelper;
 
 import java.util.ArrayList;
@@ -34,9 +35,12 @@ public class EditPlaceActivity extends AppCompatActivity {
     private Button btnSave;
     private Button btnGallery;
     private Button btnCamera;
+    private Button btnCurrentLocation;
     private AppDatabase db;
     private Place place;
     private PlaceImageHelper imgHelper;
+    private LocationHelper locHelper;
+
     private final List<Uri> selectedImages = new ArrayList<>();
 
     @Override
@@ -57,10 +61,12 @@ public class EditPlaceActivity extends AppCompatActivity {
         cbPublic = findViewById(R.id.cbPublic);
 
         btnSave = findViewById(R.id.btnSave);
+        btnCurrentLocation = findViewById(R.id.btnCurrentLocation);
         btnGallery = findViewById(R.id.btnGallery);
         btnCamera = findViewById(R.id.btnCamera);
         imgHelper = new PlaceImageHelper(this,
                 layoutImages, selectedImages);
+        locHelper = new LocationHelper(this);
 
         db = DatabaseProvider.getDatabase(this);
         int placeId = getIntent().getIntExtra("PLACE_ID", -1);
@@ -70,13 +76,15 @@ public class EditPlaceActivity extends AppCompatActivity {
         }
 
         place = db.placeDao().getById(placeId);
-        loadPlace();
         if (place == null) {
             finish();
             return;
         }
 
+        loadPlace();
         btnGallery.setOnClickListener(v -> imgHelper.openGallery());
+        btnCurrentLocation.setOnClickListener(v ->
+                locHelper.fillLocationFields(etLatitude, etLongitude));
         btnCamera.setOnClickListener(v -> imgHelper.openCamera());
         btnSave.setOnClickListener(v -> updatePlace());
     }
@@ -175,8 +183,8 @@ public class EditPlaceActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-            String[] permissions,
-            int[] grantResults) {
+                                           String[] permissions,
+                                           int[] grantResults) {
         super.onRequestPermissionsResult(requestCode,
                 permissions,
                 grantResults);

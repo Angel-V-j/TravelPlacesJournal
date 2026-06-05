@@ -12,6 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public class ImageUtils {
@@ -72,31 +75,47 @@ public class ImageUtils {
         layoutImages.removeView(preview);
     }
 
-    public static Uri getCamImgUri(Context context, Activity activity) {
-        if(PermissionHelper.hasCameraPermission(context)){
-            return createCamImgUri(context);
-        }
-        else{
-            PermissionHelper.requestCameraPermission(activity);
-        }
+    public static Uri createCamImgUri(Context context) {
+        File imageFile = createImageFile(context, "camera_");
+        if(imageFile == null)
+            return null;
 
-        return null;
+        return FileProvider.getUriForFile(context,
+                context.getPackageName() + ".provider",
+                imageFile);
     }
 
-    public static Uri createCamImgUri(Context context) {
-        try {
-            File imageFile =
-                    File.createTempFile(
-                            "place_",
-                            ".jpg",
-                            context.getCacheDir()
-                    );
+    public static Uri copyImgToAppStr(Context context, Uri sourceUri) {
+        File imageFile = createImageFile(context, "gallery_");
+        if(imageFile == null)
+            return null;
 
-            return FileProvider.getUriForFile(
-                            context,
-                            context.getPackageName() + ".provider",
-                            imageFile
-                    );
+        try {
+            InputStream in = context.getContentResolver()
+                            .openInputStream(sourceUri);
+            OutputStream out = new FileOutputStream(imageFile);
+            byte[] buffer = new byte[8192];
+            int length;
+            while((length = in.read(buffer)) > 0)
+                out.write(buffer, 0, length);
+
+            in.close();
+            out.close();
+            return Uri.fromFile(imageFile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    private static File createImageFile(Context context, String prefix) {
+        try {
+            return File.createTempFile(
+                    prefix,
+                    ".jpg",
+                    context.getFilesDir()
+            );
+
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
