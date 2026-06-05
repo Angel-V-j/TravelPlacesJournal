@@ -19,7 +19,7 @@ import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
 import com.project.travelplacesjournal.places.helpers.LocationHelper;
 import com.project.travelplacesjournal.places.helpers.PlaceImageHelper;
-import com.project.travelplacesjournal.utils.CategoryUtils;
+import com.project.travelplacesjournal.utils.ArrayAdapterUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,8 +180,8 @@ public class EditPlaceActivity extends AppCompatActivity {
 
         new Thread(() -> {
             runOnUiThread(() -> {
-                spCategory.setAdapter(CategoryUtils
-                        .createCategoryAdapter(categories, this));
+                spCategory.setAdapter(ArrayAdapterUtils
+                        .createStrArrAdapter(categories, this));
 
                 selectCurrentCategory();
             });

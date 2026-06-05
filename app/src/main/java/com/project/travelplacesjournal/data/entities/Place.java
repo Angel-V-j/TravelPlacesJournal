@@ -11,7 +11,7 @@ import androidx.room.*;
                 onDelete = ForeignKey.CASCADE
         )
 )
-public class Place {
+public class Place implements Adaptable{
 
     @PrimaryKey(autoGenerate = true)
     private int id;

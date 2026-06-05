@@ -20,7 +20,7 @@ import com.project.travelplacesjournal.data.entities.Place;
 import com.project.travelplacesjournal.data.entities.PlaceImage;
 import com.project.travelplacesjournal.places.helpers.LocationHelper;
 import com.project.travelplacesjournal.places.helpers.PlaceImageHelper;
-import com.project.travelplacesjournal.utils.CategoryUtils;
+import com.project.travelplacesjournal.utils.ArrayAdapterUtils;
 import com.project.travelplacesjournal.utils.SessionManager;
 
 import java.util.ArrayList;
@@ -174,8 +174,8 @@ public class AddPlaceActivity extends AppCompatActivity {
 
         new Thread(() -> {
             runOnUiThread(() ->
-                spCategory.setAdapter(CategoryUtils
-                        .createCategoryAdapter(categories, this)));
+                spCategory.setAdapter(ArrayAdapterUtils
+                        .createStrArrAdapter(categories, this)));
         }).start();
     }
 }

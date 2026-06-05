@@ -3,7 +3,7 @@ package com.project.travelplacesjournal.data.entities;
 import androidx.room.*;
 
 @Entity(tableName = "categories")
-public class Category {
+public class Category implements Adaptable{
 
     @PrimaryKey(autoGenerate = true)
     private int id;

@@ -37,6 +37,9 @@ public interface PlaceDao {
     @Query("SELECT * FROM places WHERE categoryId = :categoryId")
     List<Place> filterByCategory(int categoryId);
 
+    @Query("SELECT * FROM places WHERE rating >= :rating")
+    List<Place> filterByRating(int rating);
+
     @Query("SELECT * FROM places WHERE name LIKE '%' || :search || '%' " +
             "OR description LIKE '%' || :search || '%'")
     List<Place> search(String search);
